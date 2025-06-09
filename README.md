@@ -1,0 +1,2 @@
+# TallerCompuII
+ Comandos git 
