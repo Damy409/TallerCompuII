@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Management</title>
+</head>
+<body>
+
+    <hr>
+
+    <!-- ROLE MANAGEMENT -->
+    <h2>Manage User Roles</h2>
+    
+    <label for="userSelect">Select User:</label>
+    <select id="userSelect" onchange="loadUserRoles()">
+        <option value="">-- Select --</option>
+    </select>
+
+    <h3>Current Roles:</h3>
+    <ul id="roleList"></ul>
+
+    <label for="roleSelect">Add Role:</label>
+    <select id="roleSelect">
+        <option value="">-- Select Role --</option>
+    </select>
+    <button onclick="addRole()">Add Role</button>
+
+</body>
+
+<script>
+    const baseUrl = "http://localhost:8080/api";
+
+    async function submitForm(event) {
+        event.preventDefault();
+
+        const userData = {
+            name: document.getElementById("name").value,
+            lastname: document.getElementById("lastname").value,
+            email: document.getElementById("email").value 
+        };
+
+        const response = await fetch(`${baseUrl}/user`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(userData)
+        });
+
+        if (response.ok) {
+            alert("User registered successfully!");
+            document.getElementById("userForm").reset();
+            loadUsers();
+        } else {
+            alert("Error registering user.");
+        }
+    }
+
+    async function loadUsers() {
+        const response = await fetch(`${baseUrl}/user`);
+        const users = await response.json();
+
+        const userSelect = document.getElementById("userSelect");
+        userSelect.innerHTML = '<option value="">-- Select --</option>';
+
+        users.forEach(user => {
+            const option = document.createElement("option");
+            option.value = user.id;
+            option.textContent = `${user.name} ${user.lastname}`;
+            userSelect.appendChild(option);
+        });
+    }
+
+    async function loadRoles() {
+        const response = await fetch(`${baseUrl}/role`);
+        const roles = await response.json();
+
+        const roleSelect = document.getElementById("roleSelect");
+        roleSelect.innerHTML = '<option value="">-- Select Role --</option>';
+
+        roles.forEach(role => {
+            const option = document.createElement("option");
+            option.value = role.id;
+            option.textContent = role.name;
+            roleSelect.appendChild(option);
+        });
+    }
+
+    async function loadUserRoles() {
+        const userId = document.getElementById("userSelect").value;
+        if (!userId) return;
+
+        const response = await fetch(`${baseUrl}/user/${userId}`);
+        const user = await response.json();
+
+        const roleList = document.getElementById("roleList");
+        roleList.innerHTML = '';
+
+        user.roles.forEach(role => {
+            const li = document.createElement("li");
+            li.textContent = role.name;
+
+            const removeBtn = document.createElement("button");
+            removeBtn.textContent = "Remove";
+            removeBtn.onclick = () => removeRole(role.id);
+
+            li.appendChild(removeBtn);
+            roleList.appendChild(li);
+        });
+    }
+
+    async function addRole() {
+        const userId = document.getElementById("userSelect").value;
+        const roleId = document.getElementById("roleSelect").value;
+
+        if (!userId || !roleId) return alert("Select both user and role");
+
+        const response = await fetch(`${baseUrl}/user/${userId}/add-role/${roleId}`, {
+            method: "PUT"
+        });
+
+        if (response.ok) {
+            alert("Role added successfully!");
+            loadUserRoles();
+        } else {
+            alert("Error adding role.");
+            console.log(response)
+        }
+    }
+
+    async function removeRole(roleId) {
+        const userId = document.getElementById("userSelect").value;
+        if (!userId) return;
+
+        const response = await fetch(`${baseUrl}/user/${userId}/remove-role/${roleId}`, {
+            method: "PUT"
+        });
+
+        if (response.ok) {
+            alert("Role removed successfully!");
+            loadUserRoles();
+        } else {
+            alert("Error removing role.");
+            console.log(response)
+        }
+    }
+
+    // Initial loading
+    loadUsers();
+    loadRoles();
+</script>
+</html>

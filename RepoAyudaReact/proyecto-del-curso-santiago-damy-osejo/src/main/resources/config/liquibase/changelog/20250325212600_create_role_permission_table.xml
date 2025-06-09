@@ -1,0 +1,16 @@
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="role_permissions_table" author="Damy">
+        <!--  Creation of the role_permissions table with its columns  -->
+        <createTable tableName="dmt_role_permissions" remarks="Junction table for the many-to-many relationship between roles and permissions">
+            <column name="id_role" type="uuid" remarks="Reference to the role ID (part of composite primary key)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dmt_role_permissions_pk" foreignKeyName="dmt_role_permissions_role_fk" referencedTableName="dmt_role" referencedColumnNames="id"/>
+            </column>
+            <column name="id_permission" type="uuid" remarks="Reference to the permission ID (part of composite primary key)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dmt_role_permissions_pk" foreignKeyName="dmt_role_permissions_permission_fk" referencedTableName="dmt_permission" referencedColumnNames="id"/>
+            </column>
+        </createTable>
+        <comment>The role_permissions junction table has been successfully created with its constraints</comment>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,77 @@
+/* Estilo general para el cuerpo */
+body {
+    background-color: #f7f9fc; /* Fondo suave para el cuerpo */
+    font-family: 'Arial', sans-serif;
+}
+
+/* Centrado de la tarjeta de login */
+.container {
+    height: 100vh;
+}
+
+/* Estilo para la tarjeta del formulario */
+.card {
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    background-color: #ffffff;
+}
+
+/* Título del formulario */
+.card h3 {
+    font-size: 1.5rem;
+    color: #333333;
+    font-weight: bold;
+}
+
+/* Campos de formulario */
+.form-label {
+    font-size: 0.9rem;
+    color: #555555;
+}
+
+/* Estilo para los campos de entrada */
+.form-control {
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    box-shadow: none;
+    padding: 12px;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(38, 143, 255, 0.5);
+}
+
+/* Estilo para los botones */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    border-radius: 6px;
+    padding: 12px;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+/* Estilo para los enlaces */
+a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Mensajes de error y éxito */
+.text-danger {
+    font-size: 0.875rem;
+    color: #dc3545;
+}
+
+.text-success {
+    font-size: 0.875rem;
+    color: #28a745;
+}

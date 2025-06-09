@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Image Upload</title>
+</head>
+<body>
+<h2>Upload Image</h2>
+<form method="post" enctype="multipart/form-data" action="/api/images/upload">
+    <input type="file" name="file" required/>
+    <button type="submit">Upload</button>
+</form>
+
+<h2>Gallery</h2>
+<div th:each="image : ${images}">
+    <p th:text="${image.name}"></p>
+    <img th:src="@{'/api/images/' + ${image.id}}" width="200"/>
+    <hr/>
+</div>
+</body>
+</html>

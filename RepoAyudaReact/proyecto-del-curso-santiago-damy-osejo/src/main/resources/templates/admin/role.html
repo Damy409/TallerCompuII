@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Role & Permission Management</title>
+</head>
+<body>
+    <h2>Create New Role</h2>
+    <form id="roleForm" onsubmit="submitRoleForm(event)">
+        <label for="code">Code: </label>
+        <input type="text" id="code" required />
+
+        <label for="name">Name: </label>
+        <input type="text" id="name" required />
+
+        <button type="submit">Create Role</button>
+    </form>
+
+    <hr>
+
+    <h2>Create New Permission</h2>
+    <form id="permissionForm" onsubmit="submitPermissionForm(event)">
+        <label for="permCode">Code: </label>
+        <input type="text" id="permCode" required />
+
+        <label for="permName">Name: </label>
+        <input type="text" id="permName" required />
+
+        <label for="permDesc">Description: </label>
+        <input type="text" id="permDesc" required />
+
+        <button type="submit">Create Permission</button>
+    </form>
+
+    <hr>
+
+    <h2>Assign Permission to Role</h2>
+
+    <label for="roleSelect">Select Role:</label>
+    <select id="roleSelect" onchange="loadRolePermissions()">
+        <option value="">-- Select Role --</option>
+    </select>
+
+    <label for="permissionSelect">Select Permission:</label>
+    <select id="permissionSelect">
+        <option value="">-- Select Permission --</option>
+    </select>
+
+    <button onclick="assignPermission()">Assign Permission</button>
+
+    <h3>Current Permissions:</h3>
+    <ul id="permissionList"></ul>
+
+    <script>
+        const baseUrl = "http://localhost:8080/api";
+
+        async function submitRoleForm(event) {
+            event.preventDefault();
+
+            const roleData = {
+                code: document.getElementById("code").value,
+                name: document.getElementById("name").value
+            };
+
+            const response = await fetch(`${baseUrl}/role`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(roleData)
+            });
+
+            if (response.ok) {
+                alert("Role created!");
+                document.getElementById("roleForm").reset();
+                loadRoles();
+            } else {
+                alert("Error creating role.");
+            }
+        }
+
+        async function submitPermissionForm(event) {
+            event.preventDefault();
+
+            const permissionData = {
+                code: document.getElementById("permCode").value,
+                name: document.getElementById("permName").value,
+                description: document.getElementById("permDesc").value
+            };
+
+            const response = await fetch(`${baseUrl}/permission`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(permissionData)
+            });
+
+            if (response.ok) {
+                alert("Permission created!");
+                document.getElementById("permissionForm").reset();
+                loadPermissions();
+            } else {
+                alert("Error creating permission.");
+            }
+        }
+
+        async function loadRoles() {
+            const response = await fetch(`${baseUrl}/role`);
+            const roles = await response.json();
+
+            const roleSelect = document.getElementById("roleSelect");
+            roleSelect.innerHTML = '<option value="">-- Select Role --</option>';
+
+            roles.forEach(role => {
+                const option = document.createElement("option");
+                option.value = role.id;
+                option.textContent = role.name;
+                roleSelect.appendChild(option);
+            });
+        }
+
+        async function loadPermissions() {
+            const response = await fetch(`${baseUrl}/permission`);
+            const permissions = await response.json();
+
+            const permissionSelect = document.getElementById("permissionSelect");
+            permissionSelect.innerHTML = '<option value="">-- Select Permission --</option>';
+
+            permissions.forEach(perm => {
+                const option = document.createElement("option");
+                option.value = perm.id;
+                option.textContent = perm.name;
+                permissionSelect.appendChild(option);
+            });
+        }
+
+        async function assignPermission() {
+            const roleId = document.getElementById("roleSelect").value;
+            const permissionId = document.getElementById("permissionSelect").value;
+
+            if (!roleId || !permissionId) {
+                alert("Please select both role and permission.");
+                return;
+            }
+
+            const response = await fetch(`${baseUrl}/role/${roleId}/add-permission/${permissionId}`, {
+                method: "PUT"
+            });
+
+            if (response.ok) {
+                alert("Permission assigned!");
+                loadRolePermissions();
+            } else {
+                alert("Failed to assign permission.");
+            }
+        }
+
+        async function loadRolePermissions() {
+            const roleId = document.getElementById("roleSelect").value;
+            if (!roleId) return;
+    
+            const response = await fetch(`${baseUrl}/role/${roleId}`);
+            const role = await response.json();
+    
+            const permissionList = document.getElementById("permissionList");
+            permissionList.innerHTML = '';
+    
+            role.permissions.forEach(permission => {
+                const li = document.createElement("li");
+                li.textContent = permission.name;
+    
+                const removeBtn = document.createElement("button");
+                removeBtn.textContent = "Remove";
+                removeBtn.onclick = () => removeRole(permission.id);
+    
+                li.appendChild(removeBtn);
+                permissionList.appendChild(li);
+            });
+        }
+
+        async function removeRole(permissionId) {
+            const roleId = document.getElementById("roleSelect").value;
+            if (!roleId) return;
+    
+            const response = await fetch(`${baseUrl}/role/${roleId}/remove-permission/${permissionId}`, {
+                method: "PUT"
+            });
+    
+            if (response.ok) {
+                alert("Role removed successfully!");
+                loadRolePermissions();
+            } else {
+                alert("Error removing role.");
+                console.log(response)
+            }
+        }
+
+
+        // Load roles and permissions on page load
+        loadRoles();
+        loadPermissions();
+        loadRolePermissions();
+    </script>
+</body>
+</html>

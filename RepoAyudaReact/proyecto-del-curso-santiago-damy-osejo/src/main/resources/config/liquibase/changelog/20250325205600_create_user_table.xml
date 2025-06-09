@@ -1,0 +1,35 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="user_table" author="Damy">
+        <!--  Creation of permission table with its columns  -->
+        <createTable tableName="dmt_user" remarks="System Users">
+            <column name="id" type="uuid" remarks="Unique permission identifier (UUID)">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="dmt_user_pk"/>
+        </column>
+            <column name="name" type="varchar(255)" remarks="User name">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="varchar(255)" remarks="Last name">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(255)" remarks="User email">
+                <constraints nullable="true" unique="true" uniqueConstraintName="dmt_user_uk"/>
+            </column>
+            <column name="password" type="varchar(255)" remarks="User password">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_role" type="uuid" remarks="identificador de la tabla role">
+            </column>
+        </createTable>
+        <!--  Add initial data if necessary  -->
+        <comment>The permission table has been successfully created with its constraints</comment>
+    </changeSet>
+    <changeSet id="dmt_user-fks-01" author="Damy">
+        <addForeignKeyConstraint
+                constraintName="dmt_user_f1"
+                baseTableName="dmt_user"
+                baseColumnNames="id_role"
+                referencedTableName="dmt_role"
+                referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>

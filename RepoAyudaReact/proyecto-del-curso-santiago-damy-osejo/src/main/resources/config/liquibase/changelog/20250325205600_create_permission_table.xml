@@ -1,0 +1,23 @@
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="permission_table" author="Damy">
+        <!--  Creation of permission table with its columns  -->
+        <createTable tableName="dmt_permission" remarks="Table that stores system permissions">
+            <column name="id" type="uuid" remarks="Unique permission identifier (UUID)">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="dmt_permission_pk"/>
+            </column>
+            <column name="code" type="varchar(255)" remarks="Permission name (must be unique)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="dmt_permission_uk"/>
+            </column>
+            <column name="name" type="varchar(255)" remarks="Permission name (must be unique)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="dmt_permission_uk"/>
+            </column>
+            <column name="description" type="varchar(255)" remarks="Detailed description of the permission">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <!--  Add initial data if necessary  -->
+        <comment>The permission table has been successfully created with its constraints</comment>
+    </changeSet>
+</databaseChangeLog>
